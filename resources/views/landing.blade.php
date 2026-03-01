@@ -7,8 +7,9 @@
     <meta name="description" content="منصة متكاملة لإدارة محادثات واتساب، العملاء المحتملين، والرد السريع. اربط واتساب بيسنس بحسابك وادير كل المحادثات من مكان واحد.">
     <link rel="icon" type="image/png" href="{{ asset('assets/White_Black_Monogram_M_Business_Logo_-removebg-preview(2).png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=ibm-plex-sans-arabic:400,500,600,700" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@100..900&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -19,14 +20,15 @@
                         'brand-dark': '#0d4d9e',
                     },
                     fontFamily: {
-                        arabic: ['IBM Plex Sans Arabic', 'sans-serif'],
+                        arabic: ['Noto Kufi Arabic', 'sans-serif'],
+                        sans: ['Noto Kufi Arabic', 'sans-serif'],
                     },
                 },
             },
         };
     </script>
     <style>
-        body { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+        body { font-family: 'Noto Kufi Arabic', sans-serif; }
         .gradient-brand { background: linear-gradient(135deg, #1263cf 0%, #0d4d9e 100%); }
         .shadow-soft { box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(18,99,207,0.08); }
         .section-padding { padding-top: 5rem; padding-bottom: 5rem; }
@@ -353,9 +355,8 @@
         <footer class="border-t border-neutral-200/60 bg-white py-12">
             <div class="mx-auto max-w-6xl px-5 lg:px-8">
                 <div class="flex flex-col items-center justify-between gap-6 md:flex-row">
-                    <a href="/" class="flex items-center gap-2">
-                        <img src="{{ asset('assets/White Black Monogram M Business Logo (3).png') }}" alt="Chatly" class="h-8 w-auto opacity-90" />
-                        <span class="text-lg font-semibold text-neutral-800">Chatly</span>
+                    <a href="/" class="flex items-center">
+                        <img src="{{ asset('assets/White Black Monogram M Business Logo (3).png') }}" alt="Chatly" class="h-10 w-auto opacity-90" />
                     </a>
                     <div class="flex gap-8 text-[15px] text-neutral-600">
                         <a href="#المميزات" class="transition hover:text-brand">المميزات</a>
@@ -363,7 +364,7 @@
                         <a href="/client/login" class="transition hover:text-brand">تسجيل الدخول</a>
                     </div>
                 </div>
-                <p class="mt-8 text-center text-[14px] text-neutral-500">© {{ date('Y') }} Chatly. جميع الحقوق محفوظة.</p>
+                <p class="mt-8 text-center text-[14px] text-neutral-500">© {{ date('Y') }} iTap Solution LTD. جميع الحقوق محفوظة.</p>
             </div>
         </footer>
     </main>

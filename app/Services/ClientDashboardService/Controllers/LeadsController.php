@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\WhatsAppService\Models\Conversation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class LeadsController extends Controller
 {
@@ -97,6 +98,66 @@ class LeadsController extends Controller
             ]);
 
         return response()->json(['data' => $leads]);
+    }
+
+    /**
+     * تصدير العملاء المحتملين إلى ملف Excel (CSV بتشفير UTF-8 لفتحه في Excel).
+     */
+    public function export(Request $request): StreamedResponse
+    {
+        $companyId = $request->user()->company_id;
+        $interestFilter = $request->input('interest');
+
+        $query = Lead::query()
+            ->where('company_id', $companyId)
+            ->with(['assignedTo:id,name', 'conversation:id,closure_interest']);
+
+        if ($interestFilter === 'interested' || $interestFilter === 'not_interested') {
+            $query->whereHas('conversation', fn ($q) => $q->where('closure_interest', $interestFilter));
+        }
+
+        $leads = $query->orderBy('created_at', 'desc')->get();
+
+        $filename = 'leads-' . now()->format('Y-m-d-His') . '.csv';
+
+        return new StreamedResponse(function () use ($leads) {
+            $out = fopen('php://output', 'w');
+            // UTF-8 BOM so Excel opens Arabic correctly
+            fprintf($out, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // Header row (Arabic)
+            fputcsv($out, [
+                'العميل',
+                'الهاتف',
+                'الحالة',
+                'المُعيَّن',
+                'التقييم',
+                'تاريخ الإنشاء',
+            ]);
+
+            foreach ($leads as $l) {
+                $status = $l->assigned_to ? 'معيَّن' : 'غير معيَّن';
+                $assignedName = $l->assignedTo?->name ?? '—';
+                $interest = $l->conversation?->closure_interest ?? '';
+                if ($interest === 'interested') {
+                    $interest = 'مهتم';
+                } elseif ($interest === 'not_interested') {
+                    $interest = 'غير مهتم';
+                }
+                fputcsv($out, [
+                    $l->customer_name ?? '—',
+                    (string) $l->customer_phone,
+                    $status,
+                    $assignedName,
+                    $interest,
+                    $l->created_at?->format('Y-m-d H:i') ?? '',
+                ]);
+            }
+            fclose($out);
+        }, 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
     }
 
     public function assign(Request $request, int $id): JsonResponse

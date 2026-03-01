@@ -36,6 +36,7 @@ Route::prefix('client')->name('client.')->group(function () {
             Route::post('inbox/{id}/close', [InboxController::class, 'close'])->name('inbox.close');
             Route::post('inbox/{id}/reply', [InboxController::class, 'reply'])->name('inbox.reply');
             Route::get('leads', [LeadsController::class, 'index'])->name('leads.index');
+            Route::get('leads/export', [LeadsController::class, 'export'])->name('leads.export');
             Route::post('leads/sync-from-conversations', [LeadsController::class, 'syncFromConversations'])->name('leads.sync-from-conversations');
             Route::post('leads/{id}/assign', [LeadsController::class, 'assign'])->name('leads.assign');
             Route::patch('leads/{id}/interest', [LeadsController::class, 'updateInterest'])->name('leads.update-interest');

@@ -25,14 +25,14 @@
 
       <!-- رسوم بيانية -->
       <div class="mb-8 grid gap-6 lg:grid-cols-5">
-        <!-- الرسم البياني الشهري -->
+        <!-- الرسم البياني الشهري (أعمدة) -->
         <div class="lg:col-span-3 rounded-2xl border border-gray-200/80 bg-white p-5 shadow-sm ring-1 ring-gray-100">
           <h2 class="mb-4 text-base font-semibold text-gray-800">الرسائل كل شهر</h2>
           <div class="h-72">
             <canvas ref="barCanvas" />
           </div>
         </div>
-        <!-- توزيع الرسائل (عميل / ردود) -->
+        <!-- توزيع الرسائل (عميل / ردود) — دائري -->
         <div class="lg:col-span-2 rounded-2xl border border-gray-200/80 bg-white p-5 shadow-sm ring-1 ring-gray-100">
           <h2 class="mb-4 text-base font-semibold text-gray-800">توزيع الرسائل</h2>
           <div class="mx-auto h-64 w-64">
@@ -45,6 +45,38 @@
             <span class="flex items-center gap-1.5">
               <span class="h-3 w-3 rounded-full bg-[#10b981]" /> الردود
             </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- المحادثات حسب الحالة — رسم دائري -->
+      <div class="mb-8 grid gap-6 lg:grid-cols-3">
+        <div class="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-sm ring-1 ring-gray-100">
+          <h2 class="mb-4 text-base font-semibold text-gray-800">المحادثات حسب الحالة</h2>
+          <div class="mx-auto h-56 w-56">
+            <canvas ref="statusPieCanvas" />
+          </div>
+          <div class="mt-3 flex flex-wrap justify-center gap-4 text-sm">
+            <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-full bg-[#6366f1]" /> جديدة</span>
+            <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-full bg-[#0ea5e9]" /> معيّنة</span>
+            <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-full bg-[#10b981]" /> مغلقة</span>
+          </div>
+        </div>
+        <!-- بطاقات ملخصة للحالة -->
+        <div class="lg:col-span-2 flex flex-col justify-center gap-3">
+          <div class="flex flex-wrap gap-4">
+            <div class="rounded-xl border border-gray-200 bg-gray-50/80 px-4 py-3 min-w-[120px]">
+              <div class="text-xs font-medium text-gray-500">محادثات جديدة</div>
+              <div class="text-xl font-bold text-indigo-600">{{ statusCounts.new ?? 0 }}</div>
+            </div>
+            <div class="rounded-xl border border-gray-200 bg-gray-50/80 px-4 py-3 min-w-[120px]">
+              <div class="text-xs font-medium text-gray-500">معيّنة</div>
+              <div class="text-xl font-bold text-sky-600">{{ statusCounts.assigned ?? 0 }}</div>
+            </div>
+            <div class="rounded-xl border border-gray-200 bg-gray-50/80 px-4 py-3 min-w-[120px]">
+              <div class="text-xs font-medium text-gray-500">مغلقة</div>
+              <div class="text-xl font-bold text-emerald-600">{{ statusCounts.closed ?? 0 }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -87,7 +119,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { get } from '../api';
 import Chart from 'chart.js/auto';
 
@@ -97,6 +129,7 @@ const totalLeads = ref<number | null>(null);
 const totalCustomerMessages = ref(0);
 const totalAgentMessages = ref(0);
 const messagesPerMonth = ref<Array<{ year: number; month: number; count: number; label: string }>>([]);
+const conversationsByStatus = ref<Array<{ status: string; label: string; count: number }>>([]);
 const interactions = ref<Array<{
   id: number;
   customer_name: string | null;
@@ -109,8 +142,18 @@ const loading = ref(true);
 
 const barCanvas = ref<HTMLCanvasElement | null>(null);
 const doughnutCanvas = ref<HTMLCanvasElement | null>(null);
+const statusPieCanvas = ref<HTMLCanvasElement | null>(null);
 let barChart: Chart | null = null;
 let doughnutChart: Chart | null = null;
+let statusPieChart: Chart | null = null;
+
+const statusCounts = computed(() => {
+  const m: Record<string, number> = { new: 0, assigned: 0, closed: 0 };
+  for (const s of conversationsByStatus.value) {
+    m[s.status] = s.count;
+  }
+  return m;
+});
 
 function formatDate(iso: string | null | undefined): string {
   if (!iso) return '—';
@@ -131,11 +174,25 @@ function buildCharts() {
     doughnutChart.destroy();
     doughnutChart = null;
   }
+  if (statusPieChart) {
+    statusPieChart.destroy();
+    statusPieChart = null;
+  }
 
-  const labels = messagesPerMonth.value.map((r) => r.label);
-  const counts = messagesPerMonth.value.map((r) => r.count);
+  const monthData = messagesPerMonth.value.length ? messagesPerMonth.value : [];
+  const labels = monthData.length ? monthData.map((r) => r.label) : (() => {
+    const arr: string[] = [];
+    const arMonths = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      arr.push(arMonths[d.getMonth()] + ' ' + d.getFullYear());
+    }
+    return arr;
+  })();
+  const counts = monthData.length ? monthData.map((r) => r.count) : Array(labels.length).fill(0);
 
-  if (barCanvas.value && labels.length) {
+  if (barCanvas.value) {
     barChart = new Chart(barCanvas.value, {
       type: 'bar',
       data: {
@@ -196,15 +253,16 @@ function buildCharts() {
 
   const customer = totalCustomerMessages.value;
   const agent = totalAgentMessages.value;
-  if (doughnutCanvas.value && (customer > 0 || agent > 0)) {
+  const hasDistribution = customer > 0 || agent > 0;
+  if (doughnutCanvas.value) {
     doughnutChart = new Chart(doughnutCanvas.value, {
       type: 'doughnut',
       data: {
-        labels: ['رسائل العملاء', 'الردود'],
+        labels: hasDistribution ? ['رسائل العملاء', 'الردود'] : ['لا توجد رسائل'],
         datasets: [
           {
-            data: [customer, agent],
-            backgroundColor: ['#0ea5e9', '#10b981'],
+            data: hasDistribution ? [customer, agent] : [1],
+            backgroundColor: hasDistribution ? ['#0ea5e9', '#10b981'] : ['#e5e7eb'],
             borderColor: '#fff',
             borderWidth: 2,
             hoverOffset: 6,
@@ -237,6 +295,51 @@ function buildCharts() {
       },
     });
   }
+
+  const statusData = conversationsByStatus.value;
+  const statusLabels = statusData.map((s) => s.label);
+  const statusCountsArr = statusData.map((s) => s.count);
+  const hasStatusData = statusCountsArr.some((c) => c > 0);
+  if (statusPieCanvas.value) {
+    statusPieChart = new Chart(statusPieCanvas.value, {
+      type: 'pie',
+      data: {
+        labels: hasStatusData ? statusLabels : ['لا توجد محادثات'],
+        datasets: [
+          {
+            data: hasStatusData ? statusCountsArr : [1],
+            backgroundColor: hasStatusData ? ['#6366f1', '#0ea5e9', '#10b981'] : ['#e5e7eb'],
+            borderColor: '#fff',
+            borderWidth: 2,
+            hoverOffset: 6,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        layout: { padding: 8 },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(255,255,255,0.96)',
+            titleColor: '#111',
+            bodyColor: '#374151',
+            borderColor: '#e5e7eb',
+            borderWidth: 1,
+            padding: 12,
+            callbacks: {
+              label: (ctx) => {
+                const total = (ctx.dataset.data as number[]).reduce((a, b) => a + b, 0);
+                const pct = total ? Math.round(((ctx.raw as number) / total) * 100) : 0;
+                return `${ctx.label}: ${ctx.raw} (${pct}%)`;
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }
 
 onMounted(async () => {
@@ -248,6 +351,7 @@ onMounted(async () => {
       total_customer_messages: number;
       total_agent_messages: number;
       messages_per_month: Array<{ year: number; month: number; count: number; label: string }>;
+      conversations_by_status: Array<{ status: string; label: string; count: number }>;
       interactions: Array<{
         id: number;
         customer_name: string | null;
@@ -263,15 +367,18 @@ onMounted(async () => {
     totalCustomerMessages.value = res.total_customer_messages ?? 0;
     totalAgentMessages.value = res.total_agent_messages ?? 0;
     messagesPerMonth.value = res.messages_per_month ?? [];
+    conversationsByStatus.value = res.conversations_by_status ?? [];
     interactions.value = res.interactions ?? [];
   } catch {
     totalMessages.value = null;
     totalEmployees.value = null;
     totalLeads.value = null;
     messagesPerMonth.value = [];
+    conversationsByStatus.value = [];
     interactions.value = [];
   } finally {
     loading.value = false;
+    await nextTick();
     buildCharts();
   }
 });
@@ -279,5 +386,6 @@ onMounted(async () => {
 onUnmounted(() => {
   if (barChart) barChart.destroy();
   if (doughnutChart) doughnutChart.destroy();
+  if (statusPieChart) statusPieChart.destroy();
 });
 </script>

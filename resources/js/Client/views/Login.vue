@@ -10,7 +10,7 @@
 
       <div class="relative flex flex-1 flex-col justify-center">
         <h1 class="mb-3 text-3xl font-bold leading-tight md:text-4xl lg:text-5xl">
-          مرحباً بكم في وصلة
+          مرحباً بكم في Chatly
         </h1>
         <p class="mb-6 text-lg font-semibold italic opacity-95 md:text-xl">
           "إدارة المحادثات والعملاء في مكان واحد"
@@ -28,7 +28,7 @@
       <!-- الشعار — أعلى اليسار -->
       <div class="absolute left-6 top-3 md:left-8 md:top-4">
         <img
-          src="/assets/Blue White Simple Law Firm Logo.png"
+          src="/assets/White_Black_Monogram_M_Business_Logo_-removebg-preview(2).png"
           alt="لوحة العميل"
           class="h-32 object-contain md:h-36"
         />

@@ -48,6 +48,8 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        $this->call(DemoCompanySeeder::class);
+
         // User::factory(10)->create();
         // User::factory()->create([
         //     'name' => 'Test User',

@@ -15,67 +15,76 @@
         <p class="font-medium text-emerald-900">{{ notificationText }}</p>
       </div>
     </Transition>
-    <h1 class="mb-6 text-2xl font-semibold text-gray-800">صندوق الوارد</h1>
-    <div class="mb-4 flex flex-wrap items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+    <h1 class="mb-6 text-2xl font-semibold tracking-tight text-neutral-900">صندوق الوارد</h1>
+    <div class="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
       <input
         v-model="searchName"
         type="text"
         placeholder="البحث باسم العميل…"
-        class="rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-800"
+        class="rounded-[10px] border border-neutral-200 bg-neutral-50/80 px-4 py-2.5 text-[15px] text-neutral-900 placeholder:text-neutral-400 focus:border-blue-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
         @input="debouncedFetch"
       />
       <input
         v-model="searchPhone"
         type="text"
         placeholder="البحث بالهاتف…"
-        class="rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-800"
+        class="rounded-[10px] border border-neutral-200 bg-neutral-50/80 px-4 py-2.5 text-[15px] text-neutral-900 placeholder:text-neutral-400 focus:border-blue-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
         @input="debouncedFetch"
       />
-      <button type="button" class="rounded bg-gray-800 px-3 py-1.5 text-sm text-white hover:bg-gray-700" @click="fetchConversations">بحث</button>
+      <button type="button" class="rounded-[10px] bg-blue-500 px-4 py-2.5 text-[15px] font-medium text-white transition-colors hover:bg-blue-600 active:scale-[0.98]" @click="fetchConversations">بحث</button>
     </div>
-    <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">العميل</th>
-            <th class="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">الهاتف</th>
-            <th class="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">الحالة</th>
-            <th class="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">المُعيَّن</th>
-            <th class="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">آخر رسالة</th>
-            <th class="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">تاريخ الرسالة</th>
-            <th class="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">بدون رد / تعيين منذ</th>
-            <th class="w-10 px-2 py-3 text-center text-xs font-medium uppercase text-gray-500" title="جديدة">.</th>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">إجراءات</th>
+    <div class="overflow-hidden rounded-2xl border border-neutral-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+      <table class="min-w-full">
+        <thead>
+          <tr class="border-b border-neutral-200/60 bg-[#f5f5f7]/80">
+            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">العميل</th>
+            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">الهاتف</th>
+            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">الحالة</th>
+            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">المُعيَّن</th>
+            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">آخر رسالة</th>
+            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">تاريخ الرسالة</th>
+            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">بدون رد / تعيين منذ</th>
+            <th class="w-12 px-2 py-4 text-center text-[13px] font-semibold text-neutral-500" title="جديدة">.</th>
+            <th class="px-5 py-4 text-left text-[13px] font-semibold tracking-tight text-neutral-500">إجراءات</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200 bg-white">
-          <tr v-for="c in conversations" :key="c.id" class="hover:bg-gray-50">
-            <td class="px-4 py-3 text-sm text-gray-800">{{ c.customer_name ?? '—' }}</td>
-            <td class="px-4 py-3 text-sm text-gray-600">{{ c.customer_phone }}</td>
-            <td class="px-4 py-3 text-sm">
+        <tbody class="bg-white">
+          <tr
+            v-for="c in conversations"
+            :key="c.id"
+            class="border-b border-neutral-100 transition-colors duration-150 last:border-b-0 hover:bg-neutral-50/80"
+          >
+            <td class="px-5 py-4 text-[15px] font-medium text-neutral-900">{{ c.customer_name ?? '—' }}</td>
+            <td class="px-5 py-4 text-[15px] text-neutral-600">{{ c.customer_phone }}</td>
+            <td class="px-5 py-4">
               <span
-                class="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium"
+                class="inline-block rounded-full px-3 py-1 text-[13px] font-medium"
                 :class="statusBadgeClass(c.status)"
               >
                 {{ statusLabel(c.status) }}
               </span>
             </td>
-            <td class="px-4 py-3 text-sm text-gray-600">{{ c.assigned_employee?.name ?? '—' }}</td>
-            <td class="max-w-xs truncate px-4 py-3 text-sm text-gray-600">{{ c.last_message ?? '—' }}</td>
-            <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600">{{ formatMessageDate(c.last_message_at) }}</td>
-            <td class="px-4 py-3 text-sm">
+            <td class="px-5 py-4 text-[15px] text-neutral-600">{{ c.assigned_employee?.name ?? '—' }}</td>
+            <td class="max-w-xs truncate px-5 py-4 text-[15px] text-neutral-600">{{ c.last_message ?? '—' }}</td>
+            <td class="whitespace-nowrap px-5 py-4 text-[15px] text-neutral-600">{{ formatMessageDate(c.last_message_at) }}</td>
+            <td class="px-5 py-4 text-[15px]">
               <span v-if="waitingLabel(c)" class="whitespace-nowrap font-medium text-amber-600">{{ waitingLabel(c) }}</span>
-              <span v-else class="text-gray-400">—</span>
+              <span v-else class="text-neutral-400">—</span>
             </td>
-            <td class="px-2 py-3 text-center">
-              <span v-if="c.has_unread" class="inline-block h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-200" title="رسالة جديدة" />
+            <td class="px-2 py-4 text-center">
+              <span v-if="c.has_unread" class="inline-block h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-emerald-200/60" title="رسالة جديدة" />
             </td>
-            <td class="px-4 py-3 text-left text-sm">
-              <router-link :to="{ name: 'conversation', params: { id: c.id } }" class="text-gray-700 underline hover:text-gray-900">عرض</router-link>
+            <td class="px-5 py-4 text-left">
+              <router-link
+                :to="{ name: 'conversation', params: { id: c.id } }"
+                class="inline-flex items-center rounded-[10px] px-3 py-1.5 text-[15px] font-medium text-blue-500 transition-colors hover:bg-blue-500/10 hover:text-blue-600"
+              >
+                عرض
+              </router-link>
             </td>
           </tr>
           <tr v-if="conversations.length === 0 && !loading">
-            <td colspan="9" class="px-4 py-8 text-center text-sm text-gray-500">لا توجد محادثات</td>
+            <td colspan="9" class="px-5 py-12 text-center text-[15px] text-neutral-500">لا توجد محادثات</td>
           </tr>
         </tbody>
       </table>

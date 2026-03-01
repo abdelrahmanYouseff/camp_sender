@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin - {{ config('app.name', 'Laravel') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('assets/White_Black_Monogram_M_Business_Logo_-removebg-preview(2).png') }}">
     @vite(['resources/js/Admin/main.ts'])
 </head>
 <body class="antialiased">

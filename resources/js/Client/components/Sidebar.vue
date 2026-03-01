@@ -1,15 +1,12 @@
 <template>
   <aside dir="rtl" class="fixed right-0 top-0 z-10 flex h-full w-64 flex-col bg-[#f5f5f7]/85 shadow-[0_0_0_0.5px_rgba(0,0,0,0.06)] backdrop-blur-2xl">
-    <!-- الشعار واسم الشركة — أسلوب أبل -->
-    <div class="flex items-center gap-3 px-5 pt-7 pb-5">
-      <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-neutral-200/70 text-neutral-600">
-        <LayoutGrid class="h-[18px] w-[18px]" />
-      </div>
-      <div class="min-w-0 flex-1">
-        <span class="block truncate text-[15px] font-semibold tracking-tight text-neutral-900">
-          {{ isAgentView ? 'الرد على الرسائل' : (companyName || 'لوحة العميل') }}
-        </span>
-      </div>
+    <!-- الشعار -->
+    <div class="flex items-center justify-center px-4 pt-7 pb-5">
+      <img
+        src="/assets/White_Black_Monogram_M_Business_Logo_-removebg-preview(2).png"
+        :alt="isAgentView ? 'الرد على الرسائل' : (companyName || 'لوحة العميل')"
+        class="h-24 w-auto object-contain"
+      />
     </div>
 
     <!-- التنقل الرئيسي — قائمة على طراز macOS/iOS -->
@@ -17,18 +14,18 @@
       <router-link
         v-if="!isAgentView"
         :to="{ name: 'dashboard' }"
-        class="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[13px] text-neutral-600 transition-[background-color] duration-150 hover:bg-black/[0.04]"
-        active-class="!bg-black/[0.06] !text-neutral-900 font-medium"
+        class="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[15px] text-neutral-600 transition-[background-color] duration-150 hover:bg-blue-500/10"
+        active-class="!bg-blue-500/15 !text-neutral-900 font-medium"
       >
-        <LayoutDashboard class="h-[18px] w-[18px] shrink-0 opacity-75" />
+        <LayoutDashboard class="h-5 w-5 shrink-0 opacity-75" />
         <span>لوحة التحكم</span>
       </router-link>
       <router-link
         :to="{ name: 'inbox' }"
-        class="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[13px] text-neutral-600 transition-[background-color] duration-150 hover:bg-black/[0.04]"
-        active-class="!bg-black/[0.06] !text-neutral-900 font-medium"
+        class="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[15px] text-neutral-600 transition-[background-color] duration-150 hover:bg-blue-500/10"
+        active-class="!bg-blue-500/15 !text-neutral-900 font-medium"
       >
-        <Inbox class="h-[18px] w-[18px] shrink-0 opacity-75" />
+        <Inbox class="h-5 w-5 shrink-0 opacity-75" />
         <span>صندوق الوارد</span>
       </router-link>
       <!-- تبويبات المحادثات عند عرض محادثة -->
@@ -37,8 +34,8 @@
           v-for="c in sidebarConversations"
           :key="c.id"
           :to="{ name: 'conversation', params: { id: c.id } }"
-          class="flex items-center gap-2.5 rounded-[8px] px-3 py-2 text-[12px] text-neutral-600 transition-[background-color] duration-150 hover:bg-black/[0.04]"
-          :class="{ 'bg-black/[0.06] font-medium text-neutral-900': currentConversationId === String(c.id) }"
+          class="flex items-center gap-2.5 rounded-[8px] px-3 py-2 text-[14px] text-neutral-600 transition-[background-color] duration-150 hover:bg-blue-500/10"
+          :class="{ '!bg-blue-500/15 font-medium text-neutral-900': currentConversationId === String(c.id) }"
         >
           <span v-if="c.has_unread" class="h-1.5 w-1.5 shrink-0 rounded-full bg-[#34c759]" />
           <span class="min-w-0 truncate">{{ c.customer_name || c.customer_phone || 'محادثة ' + c.id }}</span>
@@ -47,46 +44,46 @@
       <template v-if="!isAgentView">
         <router-link
           :to="{ name: 'leads' }"
-          class="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[13px] text-neutral-600 transition-[background-color] duration-150 hover:bg-black/[0.04]"
-          active-class="!bg-black/[0.06] !text-neutral-900 font-medium"
+          class="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[15px] text-neutral-600 transition-[background-color] duration-150 hover:bg-blue-500/10"
+          active-class="!bg-blue-500/15 !text-neutral-900 font-medium"
         >
-          <Users class="h-[18px] w-[18px] shrink-0 opacity-75" />
+          <Users class="h-5 w-5 shrink-0 opacity-75" />
           <span>العملاء المحتملون</span>
         </router-link>
         <router-link
           :to="{ name: 'employees' }"
-          class="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[13px] text-neutral-600 transition-[background-color] duration-150 hover:bg-black/[0.04]"
-          active-class="!bg-black/[0.06] !text-neutral-900 font-medium"
+          class="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[15px] text-neutral-600 transition-[background-color] duration-150 hover:bg-blue-500/10"
+          active-class="!bg-blue-500/15 !text-neutral-900 font-medium"
         >
-          <UserCog class="h-[18px] w-[18px] shrink-0 opacity-75" />
+          <UserCog class="h-5 w-5 shrink-0 opacity-75" />
           <span>الموظفون</span>
         </router-link>
         <router-link
           :to="{ name: 'automation' }"
-          class="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[13px] text-neutral-600 transition-[background-color] duration-150 hover:bg-black/[0.04]"
-          active-class="!bg-black/[0.06] !text-neutral-900 font-medium"
+          class="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[15px] text-neutral-600 transition-[background-color] duration-150 hover:bg-blue-500/10"
+          active-class="!bg-blue-500/15 !text-neutral-900 font-medium"
         >
-          <Settings class="h-[18px] w-[18px] shrink-0 opacity-75" />
+          <Settings class="h-5 w-5 shrink-0 opacity-75" />
           <span>إعدادات الأتمتة</span>
         </router-link>
         <router-link
           :to="{ name: 'statistics' }"
-          class="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[13px] text-neutral-600 transition-[background-color] duration-150 hover:bg-black/[0.04]"
-          active-class="!bg-black/[0.06] !text-neutral-900 font-medium"
+          class="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[15px] text-neutral-600 transition-[background-color] duration-150 hover:bg-blue-500/10"
+          active-class="!bg-blue-500/15 !text-neutral-900 font-medium"
         >
-          <BarChart3 class="h-[18px] w-[18px] shrink-0 opacity-75" />
+          <BarChart3 class="h-5 w-5 shrink-0 opacity-75" />
           <span>الإحصائيات</span>
         </router-link>
       </template>
 
       <div class="my-3 pt-3">
-        <p class="mb-1.5 px-3 text-[11px] font-medium uppercase tracking-widest text-neutral-400">الحساب</p>
+        <p class="mb-1.5 px-3 text-[12px] font-medium uppercase tracking-widest text-neutral-400">الحساب</p>
         <router-link
           :to="{ name: 'account' }"
-          class="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[13px] text-neutral-600 transition-[background-color] duration-150 hover:bg-black/[0.04]"
-          active-class="!bg-black/[0.06] !text-neutral-900 font-medium"
+          class="flex items-center gap-3 rounded-[10px] px-3 py-2.5 text-[15px] text-neutral-600 transition-[background-color] duration-150 hover:bg-blue-500/10"
+          active-class="!bg-blue-500/15 !text-neutral-900 font-medium"
         >
-          <UserCircle class="h-[18px] w-[18px] shrink-0 opacity-75" />
+          <UserCircle class="h-5 w-5 shrink-0 opacity-75" />
           <span>الحساب</span>
         </router-link>
       </div>
@@ -122,7 +119,6 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { get } from '../api';
 import {
-  LayoutGrid,
   LayoutDashboard,
   Inbox,
   Users,

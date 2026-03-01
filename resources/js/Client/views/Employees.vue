@@ -1,10 +1,10 @@
 <template>
   <div class="text-right">
     <div class="mb-6 flex items-center justify-between">
-      <h1 class="text-2xl font-semibold text-gray-800">الموظفون</h1>
+      <h1 class="text-2xl font-semibold tracking-tight text-neutral-900">الموظفون</h1>
       <button
         type="button"
-        class="rounded bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
+        class="rounded-[10px] bg-blue-500 px-4 py-2.5 text-[15px] font-medium text-white transition-colors hover:bg-blue-600 active:scale-[0.98]"
         @click="showAddForm = !showAddForm"
       >
         {{ showAddForm ? 'إلغاء' : 'إضافة موظف' }}
@@ -12,66 +12,70 @@
     </div>
 
     <!-- نموذج إضافة موظف -->
-    <div v-show="showAddForm" class="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <h2 class="mb-4 text-lg font-medium text-gray-800">إضافة موظف جديد</h2>
+    <div v-show="showAddForm" class="mb-6 rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+      <h2 class="mb-4 text-lg font-semibold tracking-tight text-neutral-900">إضافة موظف جديد</h2>
       <form class="max-w-xl space-y-4" @submit.prevent="submitAdd">
         <div>
-          <label for="add-name" class="mb-1 block text-sm font-medium text-gray-700">الاسم *</label>
-          <input id="add-name" v-model="addForm.name" type="text" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-800" />
-          <p v-if="addErrors.name" class="mt-1 text-sm text-red-600">{{ addErrors.name }}</p>
+          <label for="add-name" class="mb-1.5 block text-[15px] font-medium text-neutral-700">الاسم *</label>
+          <input id="add-name" v-model="addForm.name" type="text" required class="w-full rounded-[10px] border border-neutral-200 bg-neutral-50/80 px-4 py-2.5 text-[15px] text-neutral-900 focus:border-blue-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+          <p v-if="addErrors.name" class="mt-1 text-[14px] text-red-600">{{ addErrors.name }}</p>
         </div>
         <div>
-          <label for="add-email" class="mb-1 block text-sm font-medium text-gray-700">البريد الإلكتروني *</label>
-          <input id="add-email" v-model="addForm.email" type="email" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-800" />
-          <p v-if="addErrors.email" class="mt-1 text-sm text-red-600">{{ addErrors.email }}</p>
+          <label for="add-email" class="mb-1.5 block text-[15px] font-medium text-neutral-700">البريد الإلكتروني *</label>
+          <input id="add-email" v-model="addForm.email" type="email" required class="w-full rounded-[10px] border border-neutral-200 bg-neutral-50/80 px-4 py-2.5 text-[15px] text-neutral-900 focus:border-blue-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+          <p v-if="addErrors.email" class="mt-1 text-[14px] text-red-600">{{ addErrors.email }}</p>
         </div>
         <div>
-          <label for="add-password" class="mb-1 block text-sm font-medium text-gray-700">كلمة المرور *</label>
-          <input id="add-password" v-model="addForm.password" type="password" required minlength="8" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-800" />
-          <p v-if="addErrors.password" class="mt-1 text-sm text-red-600">{{ addErrors.password }}</p>
+          <label for="add-password" class="mb-1.5 block text-[15px] font-medium text-neutral-700">كلمة المرور *</label>
+          <input id="add-password" v-model="addForm.password" type="password" required minlength="8" class="w-full rounded-[10px] border border-neutral-200 bg-neutral-50/80 px-4 py-2.5 text-[15px] text-neutral-900 focus:border-blue-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+          <p v-if="addErrors.password" class="mt-1 text-[14px] text-red-600">{{ addErrors.password }}</p>
         </div>
         <div>
-          <label for="add-role" class="mb-1 block text-sm font-medium text-gray-700">الصلاحية *</label>
-          <select id="add-role" v-model="addForm.role" required class="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-800">
+          <label for="add-role" class="mb-1.5 block text-[15px] font-medium text-neutral-700">الصلاحية *</label>
+          <select id="add-role" v-model="addForm.role" required class="w-full rounded-[10px] border border-neutral-200 bg-neutral-50/80 px-4 py-2.5 text-[15px] text-neutral-900 focus:border-blue-500/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20">
             <option value="agent">رد على الرسائل فقط</option>
             <option value="employee">موظف</option>
             <option value="company_admin">مدير شركة</option>
           </select>
-          <p class="mt-1 text-xs text-gray-500">«رد على الرسائل فقط»: يقتصر على الرد على محادثات العملاء دون صلاحيات إدارية.</p>
+          <p class="mt-1.5 text-[13px] text-neutral-500">«رد على الرسائل فقط»: يقتصر على الرد على محادثات العملاء دون صلاحيات إدارية.</p>
         </div>
-        <button type="submit" class="rounded-lg bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700" :disabled="addSaving">
+        <button type="submit" class="rounded-[10px] bg-blue-500 px-4 py-2.5 text-[15px] font-medium text-white transition-colors hover:bg-blue-600 active:scale-[0.98] disabled:opacity-60" :disabled="addSaving">
           {{ addSaving ? 'جاري الحفظ…' : 'إضافة' }}
         </button>
-        <p v-if="addErrors.submit" class="text-sm text-red-600">{{ addErrors.submit }}</p>
+        <p v-if="addErrors.submit" class="text-[14px] text-red-600">{{ addErrors.submit }}</p>
       </form>
     </div>
 
-    <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">الاسم</th>
-            <th class="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">البريد الإلكتروني</th>
-            <th class="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">الصلاحية</th>
-            <th class="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">الحالة</th>
-            <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">إجراءات</th>
+    <div class="overflow-hidden rounded-2xl border border-neutral-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+      <table class="min-w-full">
+        <thead>
+          <tr class="border-b border-neutral-200/60 bg-[#f5f5f7]/80">
+            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">الاسم</th>
+            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">البريد الإلكتروني</th>
+            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">الصلاحية</th>
+            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">الحالة</th>
+            <th class="px-5 py-4 text-left text-[13px] font-semibold tracking-tight text-neutral-500">إجراءات</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200 bg-white">
-          <tr v-for="emp in employees" :key="emp.id" class="hover:bg-gray-50">
-            <td class="px-4 py-3 text-sm text-gray-800">{{ emp.name }}</td>
-            <td class="px-4 py-3 text-sm text-gray-600">{{ emp.email }}</td>
-            <td class="px-4 py-3 text-sm text-gray-600">{{ roleLabel(emp.role) }}</td>
-            <td class="px-4 py-3">
-              <span :class="emp.status === 'active' ? 'text-green-600' : 'text-red-600'" class="text-sm font-medium">{{ emp.status === 'active' ? 'نشط' : 'غير نشط' }}</span>
+        <tbody class="bg-white">
+          <tr
+            v-for="emp in employees"
+            :key="emp.id"
+            class="border-b border-neutral-100 transition-colors duration-150 last:border-b-0 hover:bg-neutral-50/80"
+          >
+            <td class="px-5 py-4 text-[15px] font-medium text-neutral-900">{{ emp.name }}</td>
+            <td class="px-5 py-4 text-[15px] text-neutral-600">{{ emp.email }}</td>
+            <td class="px-5 py-4 text-[15px] text-neutral-600">{{ roleLabel(emp.role) }}</td>
+            <td class="px-5 py-4">
+              <span :class="emp.status === 'active' ? 'text-emerald-600 font-medium' : 'text-red-600 font-medium'" class="text-[15px]">{{ emp.status === 'active' ? 'نشط' : 'غير نشط' }}</span>
             </td>
-            <td class="px-4 py-3 text-left text-sm">
-              <button type="button" class="ml-2 text-gray-700 underline hover:text-gray-900">تعديل</button>
-              <button type="button" class="text-gray-700 underline hover:text-gray-900">تفعيل / إيقاف</button>
+            <td class="px-5 py-4 text-left">
+              <button type="button" class="ml-2 inline-flex items-center rounded-[10px] px-3 py-1.5 text-[15px] font-medium text-blue-500 transition-colors hover:bg-blue-500/10 hover:text-blue-600">تعديل</button>
+              <button type="button" class="inline-flex items-center rounded-[10px] px-3 py-1.5 text-[15px] font-medium text-blue-500 transition-colors hover:bg-blue-500/10 hover:text-blue-600">تفعيل / إيقاف</button>
             </td>
           </tr>
           <tr v-if="employees.length === 0 && !loading">
-            <td colspan="5" class="px-4 py-8 text-center text-sm text-gray-500">لا يوجد موظفون</td>
+            <td colspan="5" class="px-5 py-12 text-center text-[15px] text-neutral-500">لا يوجد موظفون</td>
           </tr>
         </tbody>
       </table>

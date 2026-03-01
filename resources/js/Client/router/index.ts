@@ -7,6 +7,7 @@ import Leads from '../views/Leads.vue';
 import Employees from '../views/Employees.vue';
 import AutomationSettings from '../views/AutomationSettings.vue';
 import Statistics from '../views/Statistics.vue';
+import Campaigns from '../views/Campaigns.vue';
 import Account from '../views/Account.vue';
 import Login from '../views/Login.vue';
 
@@ -27,13 +28,14 @@ const router = createRouter({
         { path: 'employees', name: 'employees', component: Employees },
         { path: 'automation', name: 'automation', component: AutomationSettings },
         { path: 'statistics', name: 'statistics', component: Statistics },
+        { path: 'campaigns', name: 'campaigns', component: Campaigns },
         { path: 'account', name: 'account', component: Account },
       ],
     },
   ],
 });
 
-const agentOnlyRoutes = ['leads', 'employees', 'automation', 'statistics'];
+const agentOnlyRoutes = ['leads', 'employees', 'automation', 'statistics', 'campaigns'];
 
 router.beforeEach(async (to) => {
   const isLoginPage = to.name === 'login';

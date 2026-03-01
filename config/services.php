@@ -37,6 +37,7 @@ return [
 
     'whatsapp' => [
         'webhook_verify_token' => env('WHATSAPP_WEBHOOK_VERIFY_TOKEN', ''),
+        'contact_number' => preg_replace('/\D/', '', env('WHATSAPP_CONTACT_NUMBER', '966500000000')),
     ],
 
 ];

@@ -8,7 +8,7 @@
     >
       <div class="flex flex-1 flex-col overflow-auto p-5">
         <div class="mb-4 flex items-center gap-3">
-          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-lg font-semibold text-white shadow-md">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#1263cf] text-lg font-semibold text-white shadow-md">
             {{ customerInitial }}
           </div>
           <div class="min-w-0 flex-1 text-right">
@@ -51,7 +51,7 @@
           {{ closing ? 'جاري الإغلاق…' : 'إنهاء المحادثة' }}
         </button>
         <p v-else class="text-center text-sm text-gray-500">تم إغلاق المحادثة</p>
-        <p v-if="conversation.status === 'closed' && conversation.closure_interest" class="mt-2 text-center text-xs font-medium" :class="conversation.closure_interest === 'interested' ? 'text-emerald-600' : 'text-amber-600'">
+        <p v-if="conversation.status === 'closed' && conversation.closure_interest" class="mt-2 text-center text-xs font-medium" :class="conversation.closure_interest === 'interested' ? 'text-[#1263cf]' : 'text-amber-600'">
           {{ conversation.closure_interest === 'interested' ? 'مهتم' : 'غير مهتم' }}
         </p>
       </div>
@@ -68,7 +68,7 @@
             <div class="flex gap-3">
               <button
                 type="button"
-                class="flex-1 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+                class="flex-1 rounded-xl bg-[#1263cf] px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-[#0d4d9e] disabled:opacity-50"
                 :disabled="closing"
                 @click="confirmClose('interested')"
               >
@@ -123,7 +123,7 @@
       >
         <template v-if="loading">
           <div class="flex justify-center py-12">
-            <div class="h-8 w-8 animate-spin rounded-full border-2 border-[#0a7c42] border-t-transparent" />
+            <div class="h-8 w-8 animate-spin rounded-full border-2 border-[#1263cf] border-t-transparent" />
           </div>
         </template>
         <template v-else>
@@ -146,18 +146,63 @@
 
       <!-- حقل الإدخال -->
       <div class="shrink-0 border-t border-gray-200/60 bg-[#f0f2f5] p-3">
-        <div class="flex items-end gap-2 rounded-2xl bg-white px-4 py-2 shadow-sm ring-1 ring-gray-200/80">
+        <!-- لوحة الإيموجي -->
+        <Transition name="picker">
+          <div
+            v-if="showEmojiPicker"
+            class="mb-2 rounded-xl border border-gray-200 bg-white p-3 shadow-lg"
+          >
+            <div class="mb-2 flex items-center justify-between">
+              <span class="text-xs font-medium text-gray-500">اختر إيموجي</span>
+              <button type="button" class="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600" @click="showEmojiPicker = false">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div class="flex flex-wrap gap-1">
+              <button
+                v-for="emoji in quickEmojis"
+                :key="emoji"
+                type="button"
+                class="rounded-lg p-2 text-xl transition-colors hover:bg-gray-100"
+                @click="insertEmoji(emoji)"
+              >
+                {{ emoji }}
+              </button>
+            </div>
+          </div>
+        </Transition>
+        <div class="flex items-end gap-2 rounded-2xl bg-white px-3 py-2 shadow-sm ring-1 ring-gray-200/80">
+          <button
+            type="button"
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+            title="إيموجي"
+            @click="showEmojiPicker = !showEmojiPicker"
+          >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+            title="مرفق (قريباً)"
+          >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+            </svg>
+          </button>
           <textarea
+            ref="replyInputEl"
             v-model="replyText"
-            placeholder="اكتب رسالتك…"
-            class="min-h-[44px] max-h-32 flex-1 resize-none border-0 bg-transparent py-2.5 text-[15px] text-gray-900 placeholder-gray-400 focus:outline-none"
+            placeholder="اكتب رسالتك… (Enter للإرسال، Shift+Enter سطر جديد)"
+            class="min-h-[44px] max-h-32 flex-1 resize-none border-0 bg-transparent py-2.5 pr-2 pl-1 text-[15px] text-gray-900 placeholder-gray-400 focus:outline-none"
             rows="1"
             :disabled="sending"
-            @keydown.enter.exact.prevent="sendReply"
+            @keydown="onReplyKeydown"
           />
           <button
             type="button"
-            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0a7c42] text-white transition-colors hover:bg-[#086b38] disabled:opacity-50"
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1263cf] text-white transition-colors hover:bg-[#0d4d9e] disabled:opacity-50"
             :disabled="sending || !replyText.trim()"
             :title="sending ? 'جاري الإرسال…' : 'إرسال'"
             @click="sendReply"
@@ -194,7 +239,11 @@ const replyError = ref('');
 const closing = ref(false);
 const showCloseModal = ref(false);
 const messagesEl = ref<HTMLElement | null>(null);
+const replyInputEl = ref<HTMLTextAreaElement | null>(null);
+const showEmojiPicker = ref(false);
 const id = computed(() => route.params.id);
+
+const quickEmojis = ['😊', '👍', '❤️', '🙏', '✅', '🎉', '🔥', '💯', '👋', '😅', '🤝', '📌'];
 
 const customerInitial = computed(() => {
   const name = conversation.value?.customer_name?.trim();
@@ -215,7 +264,7 @@ const statusLabel = computed(() => {
 const statusClass = computed(() => {
   const s = conversation.value?.status;
   if (s === 'new') return 'bg-amber-100 text-amber-800';
-  if (s === 'open') return 'bg-emerald-100 text-emerald-800';
+  if (s === 'open') return 'bg-[#1263cf]/10 text-[#1263cf]';
   if (s === 'closed') return 'bg-gray-100 text-gray-600';
   return 'bg-gray-100 text-gray-600';
 });
@@ -307,11 +356,42 @@ function scrollToBottom() {
 
 watch(messages, () => scrollToBottom(), { deep: true });
 
+// عند النقر على محادثة أخرى في السايد بار يتغير id — نعيد تحميل المحادثة والرسائل
+watch(id, (newId, oldId) => {
+  if (oldId !== undefined && newId !== oldId) loadConversation();
+});
+
+function onReplyKeydown(e: KeyboardEvent) {
+  if (e.key !== 'Enter') return;
+  if (e.shiftKey) return; // Shift+Enter = سطر جديد
+  e.preventDefault();
+  sendReply();
+}
+
+function insertEmoji(emoji: string) {
+  const el = replyInputEl.value;
+  if (!el) {
+    replyText.value += emoji;
+    return;
+  }
+  const start = el.selectionStart ?? replyText.value.length;
+  const end = el.selectionEnd ?? start;
+  const before = replyText.value.slice(0, start);
+  const after = replyText.value.slice(end);
+  replyText.value = before + emoji + after;
+  nextTick(() => {
+    el.focus();
+    const newPos = start + emoji.length;
+    el.setSelectionRange(newPos, newPos);
+  });
+}
+
 async function sendReply() {
   const text = replyText.value.trim();
   if (!text || sending.value) return;
   sending.value = true;
   replyError.value = '';
+  showEmojiPicker.value = false;
   try {
     const res = await post<{ data: any }>(`/inbox/${id.value}/reply`, { message: text });
     messages.value = [...messages.value, res.data];
@@ -347,5 +427,14 @@ onMounted(loadConversation);
 .modal-enter-from .relative,
 .modal-leave-to .relative {
   transform: scale(0.95);
+}
+.picker-enter-active,
+.picker-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.picker-enter-from,
+.picker-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 </style>

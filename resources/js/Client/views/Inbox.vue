@@ -33,61 +33,81 @@
       />
       <button type="button" class="rounded-[10px] bg-blue-500 px-4 py-2.5 text-[15px] font-medium text-white transition-colors hover:bg-blue-600 active:scale-[0.98]" @click="fetchConversations">بحث</button>
     </div>
-    <div class="overflow-hidden rounded-2xl border border-neutral-200/80 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
-      <table class="min-w-full">
-        <thead>
-          <tr class="border-b border-neutral-200/60 bg-[#f5f5f7]/80">
-            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">العميل</th>
-            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">الهاتف</th>
-            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">الحالة</th>
-            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">المُعيَّن</th>
-            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">آخر رسالة</th>
-            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">تاريخ الرسالة</th>
-            <th class="px-5 py-4 text-right text-[13px] font-semibold tracking-tight text-neutral-500">بدون رد / تعيين منذ</th>
-            <th class="w-12 px-2 py-4 text-center text-[13px] font-semibold text-neutral-500" title="جديدة">.</th>
-            <th class="px-5 py-4 text-left text-[13px] font-semibold tracking-tight text-neutral-500">إجراءات</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white">
-          <tr
-            v-for="c in conversations"
-            :key="c.id"
-            class="border-b border-neutral-100 transition-colors duration-150 last:border-b-0 hover:bg-neutral-50/80"
-          >
-            <td class="px-5 py-4 text-[15px] font-medium text-neutral-900">{{ c.customer_name ?? '—' }}</td>
-            <td class="px-5 py-4 text-[15px] text-neutral-600">{{ c.customer_phone }}</td>
-            <td class="px-5 py-4">
+    <!-- شبكة كروت المحادثات -->
+    <div v-if="loading" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div v-for="i in 6" :key="i" class="rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+        <div class="flex items-center gap-3">
+          <div class="h-12 w-12 shrink-0 animate-pulse rounded-full bg-neutral-200" />
+          <div class="min-w-0 flex-1 space-y-2">
+            <div class="h-4 w-32 animate-pulse rounded bg-neutral-200" />
+            <div class="h-3 w-24 animate-pulse rounded bg-neutral-100" />
+          </div>
+        </div>
+        <div class="mt-4 h-3 w-full animate-pulse rounded bg-neutral-100" />
+        <div class="mt-2 h-3 w-3/4 animate-pulse rounded bg-neutral-100" />
+      </div>
+    </div>
+    <div v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <router-link
+        v-for="c in conversations"
+        :key="c.id"
+        :to="{ name: 'conversation', params: { id: c.id } }"
+        class="group flex flex-col rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06)] transition-all duration-200 hover:border-blue-200 hover:shadow-[0_4px_12px_rgba(59,130,246,0.12)]"
+      >
+        <div class="flex items-start gap-3">
+          <div class="relative shrink-0">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-lg font-semibold text-white shadow-sm">
+              {{ customerInitial(c.customer_name) }}
+            </div>
+            <span
+              v-if="c.has_unread"
+              class="absolute -top-0.5 -left-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 ring-2 ring-white text-[10px] text-white"
+              title="رسالة جديدة"
+            />
+          </div>
+          <div class="min-w-0 flex-1">
+            <h3 class="truncate text-[16px] font-semibold text-neutral-900 group-hover:text-blue-600">
+              {{ c.customer_name || 'عميل' }}
+            </h3>
+            <p class="mt-0.5 truncate text-[13px] text-neutral-500">{{ c.customer_phone }}</p>
+            <div class="mt-2 flex flex-wrap items-center gap-2">
               <span
-                class="inline-block rounded-full px-3 py-1 text-[13px] font-medium"
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[12px] font-medium"
                 :class="statusBadgeClass(c.status)"
               >
                 {{ statusLabel(c.status) }}
               </span>
-            </td>
-            <td class="px-5 py-4 text-[15px] text-neutral-600">{{ c.assigned_employee?.name ?? '—' }}</td>
-            <td class="max-w-xs truncate px-5 py-4 text-[15px] text-neutral-600">{{ c.last_message ?? '—' }}</td>
-            <td class="whitespace-nowrap px-5 py-4 text-[15px] text-neutral-600">{{ formatMessageDate(c.last_message_at) }}</td>
-            <td class="px-5 py-4 text-[15px]">
-              <span v-if="waitingLabel(c)" class="whitespace-nowrap font-medium text-amber-600">{{ waitingLabel(c) }}</span>
-              <span v-else class="text-neutral-400">—</span>
-            </td>
-            <td class="px-2 py-4 text-center">
-              <span v-if="c.has_unread" class="inline-block h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-emerald-200/60" title="رسالة جديدة" />
-            </td>
-            <td class="px-5 py-4 text-left">
-              <router-link
-                :to="{ name: 'conversation', params: { id: c.id } }"
-                class="inline-flex items-center rounded-[10px] px-3 py-1.5 text-[15px] font-medium text-blue-500 transition-colors hover:bg-blue-500/10 hover:text-blue-600"
-              >
-                عرض
-              </router-link>
-            </td>
-          </tr>
-          <tr v-if="conversations.length === 0 && !loading">
-            <td colspan="9" class="px-5 py-12 text-center text-[15px] text-neutral-500">لا توجد محادثات</td>
-          </tr>
-        </tbody>
-      </table>
+              <span v-if="c.assigned_employee?.name" class="truncate text-[12px] text-neutral-500">
+                → {{ c.assigned_employee.name }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <p class="mt-3 line-clamp-2 min-h-[2.5rem] text-[14px] text-neutral-600">
+          {{ c.last_message || 'لا توجد رسائل بعد' }}
+        </p>
+        <div class="mt-auto flex items-center justify-between gap-2 border-t border-neutral-100 pt-3">
+          <span class="text-[12px] text-neutral-400">{{ formatMessageDate(c.last_message_at) }}</span>
+          <span v-if="waitingLabel(c)" class="truncate text-[12px] font-medium text-amber-600">{{ waitingLabel(c) }}</span>
+        </div>
+        <div class="mt-2 flex justify-start">
+          <span class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-medium text-blue-500 transition-colors group-hover:bg-blue-50 group-hover:text-blue-600">
+            عرض المحادثة
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </span>
+        </div>
+      </router-link>
+    </div>
+    <div v-if="!loading && conversations.length === 0" class="rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/50 py-16 text-center">
+      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-neutral-200/80 text-neutral-400">
+        <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+      </div>
+      <p class="mt-4 text-[15px] font-medium text-neutral-600">لا توجد محادثات</p>
+      <p class="mt-1 text-[14px] text-neutral-500">ستظهر هنا المحادثات القادمة من واتساب</p>
     </div>
   </div>
 </template>
@@ -142,6 +162,12 @@ function relativeTimeSince(iso: string | null | undefined): string {
   } catch {
     return '';
   }
+}
+
+function customerInitial(name: string | null | undefined): string {
+  if (!name || !name.trim()) return '؟';
+  const trimmed = name.trim();
+  return trimmed.charAt(0).toUpperCase();
 }
 
 function statusLabel(status: string | null | undefined): string {

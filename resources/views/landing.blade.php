@@ -58,7 +58,11 @@
                 <a href="#حالات-الاستخدام" class="text-[15px] font-medium text-white/90 transition hover:text-white">حالات الاستخدام</a>
                 <a href="#كيف-تعمل" class="text-[15px] font-medium text-white/90 transition hover:text-white">كيف تعمل</a>
                 <a href="#الأسعار" class="text-[15px] font-medium text-white/90 transition hover:text-white">الأسعار</a>
+                @auth
+                <a href="/client" class="rounded-[12px] bg-white px-5 py-2.5 text-[15px] font-medium text-brand shadow-soft transition hover:bg-neutral-100">لوحة التحكم</a>
+                @else
                 <a href="/client/login" class="rounded-[12px] bg-white px-5 py-2.5 text-[15px] font-medium text-brand shadow-soft transition hover:bg-neutral-100">تسجيل الدخول</a>
+                @endauth
             </nav>
         </div>
     </header>

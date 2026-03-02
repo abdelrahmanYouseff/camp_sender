@@ -5,12 +5,12 @@
       <img
         src="/assets/White Black Monogram M Business Logo (3).png"
         :alt="isAgentView ? 'الرد على الرسائل' : (companyName || 'لوحة العميل')"
-        class="h-24 w-auto object-contain"
+        class="h-32 w-auto object-contain md:h-36"
       />
     </div>
 
     <!-- التنقل الرئيسي — قائمة على طراز macOS/iOS -->
-    <nav class="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
+    <nav class="flex-1 space-y-2 overflow-y-auto px-3 py-2">
       <router-link
         v-if="!isAgentView"
         :to="{ name: 'dashboard' }"
@@ -29,7 +29,7 @@
         <span>صندوق الوارد</span>
       </router-link>
       <!-- تبويبات المحادثات عند عرض محادثة -->
-      <div v-if="isConversationRoute && sidebarConversations.length" class="mr-1 mt-1 max-h-44 space-y-0.5 overflow-y-auto pr-2">
+      <div v-if="isConversationRoute && sidebarConversations.length" class="mr-1 mt-2 max-h-44 space-y-1.5 overflow-y-auto pr-2">
         <router-link
           v-for="c in sidebarConversations"
           :key="c.id"

@@ -9,7 +9,7 @@
         :class="
           isCustomer
             ? 'rounded-br-md bg-white text-gray-900 ring-1 ring-gray-200/80'
-            : 'rounded-bl-md bg-[#0a7c42] text-white'
+            : 'rounded-bl-md bg-[#1263cf] text-white'
         "
       >
         <p class="whitespace-pre-wrap break-words text-[15px] leading-relaxed">{{ message.message }}</p>
